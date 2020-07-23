@@ -18,24 +18,24 @@ void linkedListInitial(List* phead);
 void linkedListCreateWithoutHeadNodeFromTail(List* phead);	//头插法
 void linkedListCreateWithoutHeadNodeFromHead(List* phead);	//尾插法
 #endif 
-void  linkedListInitial(List* phead);//初始化链表
-void linkedListWithoutHeadNodeAddFromHead(List* phead, ET val);	//头插法
-void linkedListWithoutHeadNodeAddFromTail(List* phead, ET val);	//尾插法
-Node* linkedLIstWithoutHeadNodeGetHead(List* phead);		//获取头结点
-Node* linkedListWithoutHeadNodeGetTail(List* phead);		//获取尾结点
-int linkedListWithoutHeadNodeGetLength(List* phead);	//获取表长度
-void linkedListWithoutHeadNodeDropHead(List* phead);	//删除头结点
-void linkedListWithoutHeadNodeDropTail(List* phead);	//删除尾节点
-void linkedListWithoutHeadNodeSortByValue(List* phead);	//排序
-void linkedListWithoutHeadNodeInsertByValue(List* phead, ET val);				//按值插入
-void linkedListWithoutHeadNodeInsertByPosition(List* phead, int pos, ET val);	//按位置插入
-void linkedListWithoutHeadNodeDropByValue(List* phead, ET val);				//按值删除
-void linkedListWithoutHeadNodeDropByPosition(List* phead, int pos, ET val);	//按位置删除
-void linkedListWithoutHeadNodeReverseList(List* phead);		//反转链表
-void linkedListWithoutHeadNodeShowData(List* phead);	//展示数据
-void linkedListWithoutHeadNodeClearList(List* phead);	//清空链表
-void linkedListWithoutHeadNodeDestroyList(List* phead);	//摧毁链表
-void linkedListWithoutHeadNodeEraseByValue(List* phead, ET val);	//全表彻底删除某一个值
+void  linkedListInitial(List* phead);											//初始化链表
+void  linkedListWithoutHeadNodeAddFromHead(List* phead, ET val);				//头插法
+void  linkedListWithoutHeadNodeAddFromTail(List* phead, ET val);				//尾插法
+Node* linkedLIstWithoutHeadNodeGetHead(List* phead);							//获取头结点
+Node* linkedListWithoutHeadNodeGetTail(List* phead);							//获取尾结点
+int   linkedListWithoutHeadNodeGetLength(List* phead);							//获取表长度
+void  linkedListWithoutHeadNodeDropHead(List* phead);							//删除头结点
+void  linkedListWithoutHeadNodeDropTail(List* phead);							//删除尾节点
+void  linkedListWithoutHeadNodeSortByValue(List* phead);						//排序
+void  linkedListWithoutHeadNodeInsertByValue(List* phead, ET val);				//按值插入
+void  linkedListWithoutHeadNodeInsertByPosition(List* phead, int pos, ET val);	//按位置插入
+void  linkedListWithoutHeadNodeDropByValue(List* phead, ET val);				//按值删除
+void  linkedListWithoutHeadNodeDropByPosition(List* phead, int pos, ET val);	//按位置删除
+void  linkedListWithoutHeadNodeReverseList(List* phead);						//反转链表
+void  linkedListWithoutHeadNodeShowData(List* phead);							//展示数据
+void  linkedListWithoutHeadNodeClearList(List* phead);							//清空链表
+void  linkedListWithoutHeadNodeDestroyList(List* phead);						//摧毁链表
+void  linkedListWithoutHeadNodeEraseByValue(List* phead, ET val);				//全表彻底删除某一个值
 
 //有头结点的情况下的头插法和尾插法
 void linkedListCreateWithHeadNodeFromHead(List* phead);

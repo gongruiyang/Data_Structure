@@ -24,6 +24,9 @@
     <ClInclude Include="linkedlist.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="BClinkedlist.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestMain.c">
