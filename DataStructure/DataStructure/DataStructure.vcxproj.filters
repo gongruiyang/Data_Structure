@@ -27,6 +27,21 @@
     <ClInclude Include="BClinkedlist.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="SCLinkedList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SeqStack.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkedStack.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SeqQueue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkedQueue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestMain.c">

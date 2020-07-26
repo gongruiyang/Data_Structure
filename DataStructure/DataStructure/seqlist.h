@@ -8,7 +8,7 @@
 #define AUTO_CAPACITY_GROWTH_MULTIPLE 2		//自动容量增长倍数
 typedef int ET;								//Element Type
 /*****************************************************************************/
-//定义顺序表的结构
+//顺序表
 typedef struct SeqList
 {
 	ET *base;
