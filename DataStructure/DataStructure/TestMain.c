@@ -1,6 +1,6 @@
 #include "seqlist.h"
 
-int main(){
+int test(){
 	SeqList list;
 	SeqListInitial(&list);	//³õÊ¼»¯Ë³Ğò±í
 

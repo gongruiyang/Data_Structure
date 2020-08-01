@@ -42,9 +42,18 @@
     <ClInclude Include="LinkedQueue.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="BinaryTree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Heap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestMain.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="双向循环链表作业.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
