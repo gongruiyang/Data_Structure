@@ -421,16 +421,6 @@ void linkedListWithoutHeadNodeEraseByValue(List* phead, ET val){
 }
 
 
-
-
-
-
-
-
-
-
-
-
 //***************************************************************************************
 //无头结点单链表 函数实现
 void linkedListCreateWithHeadNodeFromHead(List* phead){

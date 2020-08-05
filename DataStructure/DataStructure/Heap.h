@@ -19,6 +19,11 @@ void HeapInitial(MinHeap* php, size_t cap);
 void HeapInsertData(MinHeap* php, ET x);
 void HeapShow(MinHeap* php);
 void HeapDeleteByValue(MinHeap* php, ET x);
+void HeapCreate(MinHeap* php, int ar[], int n);
+void HeapSort(MinHeap* php, int ar[], int n);
+ET HeapTop(MinHeap* php);
+bool IsEmpty(MinHeap* php);
+
 //***************************************************************************************
 //方法实现
 void HeapInitial(MinHeap* php, size_t cap){
@@ -93,5 +98,46 @@ void HeapShow(MinHeap* php){
 	}
 	printf("\n");
 }
+void HeapCreate(MinHeap* php, int ar[], int n){
+	php->capacity = n;
+	php->base = (ET*)malloc(sizeof(ET) * php->capacity);
+	assert(php->base != NULL);
+	for (int i = 0; i < n;i++)
+	{
+		php->base[i] = ar[i];
+	}
+	php->size = n;
+
+	//堆调整
+	int currentPos = n / 2 - 1;
+	while (currentPos >= 0){
+		HeapShiftDown(php, currentPos);
+		currentPos--;
+	}
+}
+bool IsEmpty(MinHeap* php){
+	assert(php != NULL);
+	return php->size == 0;
+}
+void HeapSort(MinHeap* php,int ar[],int n){
+	HeapCreate(php, ar, n);
+	while (php->size >= 0)
+	{
+		php->size--;
+		Swap(&php->base[php->size], &php->base[0]);
+		HeapShiftDown(php, 0);
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		ar[i] = php->base[i];
+	}
+}
+
+ET HeapTop(MinHeap* php){
+	assert(php != NULL && php->size > 0);
+	return php->base[0];
+}
+
 
 #endif

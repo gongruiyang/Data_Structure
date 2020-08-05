@@ -48,6 +48,15 @@
     <ClInclude Include="Heap.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="SLinkedList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BinarySearchTree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Sort.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestMain.c">
@@ -56,5 +65,8 @@
     <ClCompile Include="双向循环链表作业.c">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>
