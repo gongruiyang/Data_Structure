@@ -21,8 +21,13 @@ ET LinkedStackGetTop(LinkStack *pst);
 void LinkedStackShowData(LinkStack *pst);
 int LinkedStackGetLength(LinkStack *pst);
 void LinkedStackDestroy(LinkStack *pst);
+bool LinkedStackIsEmpty(LinkStack *pst);
 /*****************************************************************************/
 //º¯Êý¶¨Òå
+bool LinkedStackIsEmpty(LinkStack *pst){
+	assert(pst != NULL);
+	return (*pst) == NULL;
+}
 void LinkedStackInitial(LinkStack *pst){
 	assert(pst != NULL);
 	*pst = NULL;
