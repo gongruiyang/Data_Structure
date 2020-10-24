@@ -1,6 +1,7 @@
 #ifndef _BINARYTREE_H_
 #define _BINARYTREE_H_
 #include "common.h"
+#include "LinkedQueue.h"
 //***************************************************************************************
 //常量定义
 typedef char ET;
@@ -111,24 +112,24 @@ void LinkedStackDestroy(LinkStack *pst){
 }
 //***************************************************************************************
 //函数声明
-/*	二叉树的创建	*/
+/*	 二叉树的创建	*/
 void BinaryTreeInitial(BTree *t);										//初始化二叉树
 void BinaryTreeCreate(BTree *t);										//创建二叉树
 BTree BinaryTreeGetTree();												//根据输入创造一个二叉树
 BTree BinaryTreeStrToTree(const char* str, int* i);						//根据字符串创建二叉树
 BTree BinaryTree_VLR_LVR_To_Tree(const char* vlr, const char* lvr, int n);		//根据前序遍历和中序遍历创建二叉树
 
-/*	二叉树的遍历	*/
+/*	 二叉树的遍历	*/
 //递归算法
 void BinaryTreeVLR(BTree t);		//前序遍历递归算法
 void BinaryTreeLVR(BTree t);		//中序遍历递归算法
 void BinaryTreeLRV(BTree t);		//后序遍历递归算法
-void BinaryTreeLevel(BTree t);		//层出遍历
+void BinaryTreeLevel(BTree t);		//层次遍历
 //非递归
 void BinaryTreeVLR_Nor(BTree t);	//前序遍历非递归算法
 void BinaryTreeLVR_Nor(BTree t);	//中序遍历非递归算法
 void BinaryTreeLRV_Nor(BTree t);	//后序遍历非递归算法
-void BinaryTreeLevel_Nor(BTree t);	
+void BinaryTreeLevel_Nor(BTree t);	//层次遍历
 
 /* 其他操作 */
 int		BinaryTreeSize(BTree t);						//计算树结点个数
@@ -208,12 +209,12 @@ BTree BinaryTreeStrToTree(const char* str,int* i){
 }
 BTree BinaryTree_VLR_LVR_To_Tree(const char* vlr, const char* lvr,int n){
 
-	int k = 0;
+	int k = 0;     
 	while ((*vlr) != (*lvr))
-	{
+	{  
 		lvr++;
 		k++;
-	}
+	} 
 	if ((*vlr) == '\0')
 		return NULL;
 	else
@@ -306,6 +307,23 @@ void BinaryTreeLRV_Nor(BTree t){
 			else
 				t = p->rightNode;
 		} while (!LinkedStackIsEmpty(&st));
+	}
+}
+void BinaryTreeLevel(BTree t){
+	if (t != NULL){
+		LinkedQueue Q;
+		LinkedQueueInit(&Q);
+
+		LinkedQueueIn(&Q, t);
+		while (!IsEmpty(&Q)){	//判断队列是否为空
+			BTNode* p = LinkedQueueGetFront(&Q);	//获取队列队首元素
+			LinkedQueueOut(&Q);						//出队
+			printf("%c ", p->data);
+			if (p->leftNode != NULL)
+				LinkedQueueIn(&Q, p->leftNode);		//左孩子入队
+			if (p->rightNode != NULL)
+				LinkedQueueIn(&Q,p->rightNode);		//右孩子入队
+		}
 	}
 }
 
