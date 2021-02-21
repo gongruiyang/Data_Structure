@@ -147,14 +147,76 @@ public:
 
 		return true;
 	}
-	void InOrder()
+	void inOrder()
 	{
 		InOrder(head->parent);
 		cout << endl;
 	}
+	bool isValidRBTree()
+	{
+		// 空树是红黑树
+		Node* root = getRoot();
+		if (root == nullptr)
+			return true;
+
+		// 树非空 -> 使用性质确定
+		/*
+		性质：
+		1. 每个结点不是红色就是黑色
+		2. 根节点是黑色的
+		3. 如果一个节点是红色的，则它的两个孩子结点是黑色的
+		4. 对于每个结点，从该结点到其所有后代叶结点的简单路径上，均 包含相同数目的黑色结点
+		5. 每个叶子结点都是黑色的(此处的叶子结点指的是空结点)
+		*/
+		if (root->color != BLACK)
+		{
+			cout << "违反了性质2：根结点不是黑色的！" << endl;
+			return false;
+		}
+
+		// 性质3和性质4同时检测
+		size_t blackCount = 0;
+		Node* cur = root;
+		while (cur)
+		{
+			if (cur->color == BLACK)
+				blackCount++;
+			cur = cur->left;
+		}
+		size_t pathBlackCount = 0;
+		return _ValidRBTree(root, pathBlackCount, blackCount);
+	}
+
 private:
 	Node* head;	 // 指向红黑树头结点的指针
 
+	bool _ValidRBTree(Node* root,  size_t pathBlackCount, const size_t blackCount)
+	{
+		if (nullptr == root)
+			return true;
+
+		if (root->color == BLACK)
+			pathBlackCount++;
+
+		Node* parent = root->parent;
+		// parent != head 表示root一定不是红黑树的根结点，parent一定是有效节点
+		if (parent != head && parent->color == RED && root->color == RED)
+		{
+			cout << "违反性质3：存在连在一起的红色结点" << endl;
+			return false;
+		}
+
+		// root是一个叶子节点
+		if (root->left == nullptr && root->right == nullptr)
+		{
+			if (pathBlackCount != blackCount)
+			{
+				cout << "违反性质4：路径中黑色节点的个数不同！" << endl;
+				return false;
+			}
+		}
+		return _ValidRBTree(root->left, pathBlackCount, blackCount) && _ValidRBTree(root->right, pathBlackCount, blackCount)
+	}
 	void InOrder(Node* root)
 	{
 		if (root)
