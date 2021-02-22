@@ -37,19 +37,22 @@ public:
 		delete head;
 		head = nullptr;
 	}
+
 	bool insert(const T& data)
 	{
-		Node* root = getRoot();	// 保存根结点
+		Node*& root = getRoot();	// 保存根结点
 
 		// 1. 按照BST的规则寻找插入结点的位置
 		// 1.1 若root为空，则需要建立root节点
-		if (root == nullptr)
+		if (nullptr == root)
 		{
-			root = new Node(data,BLACK);	// 根结点默认为黑色
+			root = new Node(data, BLACK);	// 根结点默认为黑色
 			root->parent = head;
-			head->left = head->right = head->parent = root;
+			head->left = root;
+			head->right = root;
 			return true;
 		}
+
 		// 1.2 若root不为空，则需要寻找插入位置
 		Node* cur = root;
 		Node* parent = head;
@@ -60,8 +63,10 @@ public:
 				cur = cur->left;
 			else if (data > cur->data)
 				cur = cur->right;
-			else return false;
+			else
+				return false;
 		}
+
 		// 1.3 找到插入位置后，插入新节点
 		cur = new Node(data);
 		if (data < parent->data)
@@ -71,32 +76,33 @@ public:
 		cur->parent = parent;
 
 		// 2. 检测是否违反性质：检测新入节点预期双亲节点的颜色是否都为红色
-		while (parent != head && parent->color == RED)	
+		while (parent != head && RED == parent->color)
 			/*
-				向上迭代的终止条件：
-					1. 若双亲节点颜色为黑色则表示不需要调整，反之需要调整
-					2. parent节点到达head时继续调整，反之停止调整
+			向上迭代的终止条件：
+			1. 若双亲节点颜色为黑色则表示不需要调整，反之需要调整
+			2. parent节点到达head时继续调整，反之停止调整
 			*/
 		{
 			// 违反性质表现：cur和parent两个节点都是红色的
 			Node* grandFather = parent->parent;
-			if (parent == grandFather->left)	
+			if (parent == grandFather->left)
 			{
 				// 情况一二三：双亲在祖父节点的左侧
 				Node* uncle = grandFather->right;
-				if (uncle != nullptr && uncle->color == RED)
+				if (uncle && RED == uncle->color)
 				{
 					/* 
 					情况一：uncle结点存在且为红色
 					解决方法：
-						1. cur父节点颜色变为黑色
-						2. cur祖父节点颜色变为红色
-						3. 向上迭代cur和parent指针
+					1. cur父节点颜色变为黑色
+					2. cur祖父节点颜色变为红色
+					3. 向上迭代cur和parent指针
 					*/
-					parent->color = uncle->color = BLACK;
+					parent->color = BLACK;
+					uncle->color = BLACK;
 					grandFather->color = RED;
 					cur = grandFather;
-					parent = parent->parent;
+					parent = cur->parent;
 				}
 				else  //情况2和情况3
 				{
@@ -113,40 +119,42 @@ public:
 					RightRotation(grandFather);
 				}
 			}
-			else 
+			else
 			{
 				// 情况一二三的镜像情况：双亲在祖父节点的右侧
 				Node* uncle = grandFather->left;
-				if (uncle != nullptr && uncle->color == RED)
+				if (uncle && RED == uncle->color)
 				{
 					// 情况一：叔叔结点存在且为红色
-					parent->color = uncle->color = BLACK;
+					parent->color = BLACK;
+					uncle->color = BLACK;
 					grandFather->color = RED;
 					cur = grandFather;
-					parent = parent->parent;
+					parent = cur->parent;
 				}
 				else
 				{
 					// uncle节点不存在 || uncle节点为黑色
-					if (cur == parent->right)
+					if (cur == parent->left)
 					{
 						// 情况3 ： 转化为 情况2
-						LeftRotation(parent);
+						RightRotation(parent);
 						std::swap(parent, cur);
 					}
 					// 情况2
+					parent->color = BLACK;  // while循环终止条件达成
 					grandFather->color = RED;
-					parent->color = BLACK;	// while循环终止条件达成
 					LeftRotation(grandFather);
 				}
 			}
 		}
 		// 新节点插入后 更新头结点的左右指针
+		root->color = BLACK;
 		head->left = getLeftMin();
 		head->right = getRightMax();
-
 		return true;
 	}
+
 	void inOrder()
 	{
 		InOrder(head->parent);
@@ -183,20 +191,21 @@ public:
 				blackCount++;
 			cur = cur->left;
 		}
-		size_t pathBlackCount = 0;
+		size_t pathBlackCount = 0;	// 用来保存单条路径中黑色节点的个数
 		return _ValidRBTree(root, pathBlackCount, blackCount);
 	}
 
 private:
 	Node* head;	 // 指向红黑树头结点的指针
 
-	bool _ValidRBTree(Node* root,  size_t pathBlackCount, const size_t blackCount)
+	bool _ValidRBTree(Node* root, size_t pathBlackCount, const size_t blackCount)
 	{
 		if (nullptr == root)
 			return true;
 
 		if (root->color == BLACK)
 			pathBlackCount++;
+			
 
 		Node* parent = root->parent;
 		// parent != head 表示root一定不是红黑树的根结点，parent一定是有效节点
@@ -215,7 +224,7 @@ private:
 				return false;
 			}
 		}
-		return _ValidRBTree(root->left, pathBlackCount, blackCount) && _ValidRBTree(root->right, pathBlackCount, blackCount)
+		return _ValidRBTree(root->left, pathBlackCount, blackCount) && _ValidRBTree(root->right, pathBlackCount, blackCount);
 	}
 	void InOrder(Node* root)
 	{
@@ -236,7 +245,7 @@ private:
 			root = nullptr;
 		}
 	}
-	void RightRotation()
+	void RightRotation(Node* parent)
 	{
 		Node* subL = parent->left; // 父节点的左孩子节点
 		Node* subLR = subL->right; // 父节点的左孩子节点的右孩子节点
@@ -261,7 +270,7 @@ private:
 
 		// parent可能是根节点：需要修改_root
 		// parent也可能是一棵子树: 需要修改pparent的左/右指针域的指向
-		if (nullptr == pparent) // 若是根结点，修改树的root指向
+		if (head == pparent) // 若是根结点，修改树的root指向
 		{
 			// 旋转之前parent是根节点
 			head->parent = subL;
@@ -275,7 +284,7 @@ private:
 				pparent->right = subL;
 		}
 	}
-	void LeftRotation()
+	void LeftRotation(Node* parent)
 	{
 		Node* subR = parent->right; // 父节点的右孩子节点
 		Node* subRL = subR->left; // 父节点的右孩子节点的左孩子节点
@@ -298,7 +307,7 @@ private:
 		// 旋转之前：parent可能是根结点，可能是非根结点
 		// parent是根节点：修改_root的指向
 		// parent是子树：修改原parent左||右指针域的指向
-		if (nullptr == pparent) // 若是根结点，修改树的root指向
+		if (head == pparent) // 若是根结点，修改树的root指向
 		{
 			head->parent = subR;
 		}
@@ -334,4 +343,5 @@ private:
 			cur = cur->right;
 		return cur;
 	}
+
 };
