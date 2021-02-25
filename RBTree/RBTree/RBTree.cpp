@@ -345,3 +345,67 @@ private:
 	}
 
 };
+
+// 迭代器
+template<class T>
+struct RBTreeIterator
+{
+	typedef RBTreeNode<T> Node;
+	typedef RBTreeIterator<T> self;
+public:
+	RBTreeIterator(Node* n = nullptr) : node(n){}
+	// 具有指针类似的方法
+	T& operator*()
+	{
+		return node->data;
+	}
+	T* operator->()
+	{
+		return &(operator*());
+	}
+	// 能够移动
+	self& operator++()
+	{
+		Increment();
+		return *this;
+	}
+	self& operator++(int)
+	{
+		self temp(*this);
+		Increment();
+		return temp;
+	}
+	self& operator--()
+	{
+		Decrement();
+		return *this;
+	}
+	self& operator--(int)
+	{
+		self temp(*this);
+		Decrement();
+		return temp;
+	}
+	bool operator!=(const self& s)const
+	{
+		return node != s.node;
+	}
+	bool operator==(const self& s)const
+	{
+		return node == s.node;
+	}
+
+private:
+	Node* node;		// 封装 节点指针
+
+	// 找当前迭代器的后一个位置
+	void Increment()
+	{
+
+	}
+	// 找当前迭代器的前一个位置
+	void Decrement()
+	{
+
+	}
+};
