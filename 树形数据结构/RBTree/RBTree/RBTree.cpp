@@ -364,6 +364,9 @@ public:
 		return &(operator*());
 	}
 	// 能够移动
+	/*
+	找比当前节点大的 所有节点中最小的节点
+	*/
 	self& operator++()
 	{
 		Increment();
