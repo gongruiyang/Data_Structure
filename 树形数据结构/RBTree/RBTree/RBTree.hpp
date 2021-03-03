@@ -1,12 +1,15 @@
+#pragma once
 #include <iostream>
+#include <string>
 using namespace std;
-
+// 红黑树颜色定义
 enum Color
 {
 	RED,
 	BLACK
 };
 
+// 红黑树结点定义
 template<class T>
 struct RBTreeNode
 {
@@ -19,26 +22,167 @@ struct RBTreeNode
 	RBTreeNode(const T& x = T(), Color c = RED) :left(nullptr), right(nullptr), parent(nullptr), data(x), color(c){}
 };
 
+// 迭代器
 template<class T>
+struct RBTreeIterator
+{
+	typedef RBTreeNode<T> Node;
+	typedef RBTreeIterator<T> self;
+public:
+	RBTreeIterator(Node* n = nullptr) : node(n){}
+	// 具有指针类似的方法
+	T& operator*()
+	{
+		return node->data;
+	}
+	T* operator->()
+	{
+		return &(operator*());
+	}
+	/*
+	找比当前节点大的 所有节点中最小的节点：
+	1. 如果当前节点的右子树存在，应该在其右子树中找最小值节点（最左侧）
+	2. 如果当前节点的右子树不存在，应该在其双亲中不断查找
+	*/
+	self& operator++()
+	{
+		Increment();
+		return *this;
+	}
+	self& operator++(int)
+	{
+		self temp(*this);
+		Increment();
+		return temp;
+	}
+
+	/*
+	找比当前迭代器小的 所有节点中最大的:
+	1. 如果当前节点的左子树存在，应该在其左子树中找最大值节点（最右侧）
+	2. 如果当前节点的左子树不存在，
+	*/
+	self& operator--()
+	{
+		Decrement();
+		return *this;
+	}
+	self& operator--(int)
+	{
+		self temp(*this);
+		Decrement();
+		return temp;
+	}
+	bool operator!=(const self& s)const
+	{
+		return node != s.node;
+	}
+	bool operator==(const self& s)const
+	{
+		return node == s.node;
+	}
+
+private:
+	Node* node;		// 封装 节点指针
+
+	// 找当前迭代器的后一个位置
+	void Increment()
+	{
+		if (node->right)
+		{
+			// 当前节点的右子树如果存在，就在右子树中寻找最小值
+			node = node->right;
+			while (node->left)
+			{
+				node = node->left;
+			}
+		}
+		else
+		{
+			// 当前节点的右子树不存在，在父节点中寻找比当前节点大的节点
+			// 什么情况下才算大呢？ 当node是双亲的左孩子时，才算找到
+			Node* parent = node->parent;
+			while (node == parent->right)
+			{
+				node = parent;
+				parent = parent->parent;
+			}
+			// 防止特殊情况：当根结点没有右子树时，迭代器恰好在根节点的位置
+			if (node->right != parent)
+				node = parent;	// 此时node才指向父节点中比之前节点大的节点 
+		}
+	}
+	// 找当前迭代器的前一个位置
+	void Decrement()
+	{
+		if (node == node->parent->parent && RED == node->color)
+		{
+			// node 在 end 的位置
+			node = node->right;
+
+		}
+		else if (node->left)
+		{
+			// 到 node 的左子树找最大的节点
+			node = node->left;
+			while (node->right)
+			{
+				node = node->right;
+			}
+		}
+		else
+		{
+			// 右子树不存在 -> 应该到 node 的双亲中找出比 node 小的节点
+			Node* parent = node->parent;
+			while (node == parent->left)
+			{
+				node = parent;
+				parent = node->parent;
+			}
+
+			node = parent;
+		}
+
+	}
+};
+
+// 红黑树结构及定义
+// T ： 表示红黑树中放置的元素类型
+// KOFP：表示从T中提取Key
+template<class T, class KOFP>
 class RBTree
 {
 	typedef RBTreeNode<T> Node;
+	
 public:
+	typedef RBTreeIterator<T> iterator;
 	RBTree()
 	{
+		_size = 0;
 		head = new Node();
 		head->left = head;
 		head->right = head;
 		head->parent = nullptr;		// 由于RBT中无节点，故头结点的父指针指向nullptr
+
 	}
 	~RBTree()
 	{
 		Destroy(head->parent);
 		delete head;
 		head = nullptr;
+		_size = 0;
 	}
 
-	bool insert(const T& data)
+	// 迭代器
+	iterator begin()
+	{
+		return iterator(head->left);
+	}
+	iterator end()
+	{
+		return iterator(head);
+	}
+	// 插入数据构造红黑树
+	pair<iterator, bool> insert(const T& data)
 	{
 		Node*& root = getRoot();	// 保存根结点
 
@@ -50,25 +194,29 @@ public:
 			root->parent = head;
 			head->left = root;
 			head->right = root;
-			return true;
+			_size = 1;
+			return make_pair(iterator(root), true);
 		}
 
 		// 1.2 若root不为空，则需要寻找插入位置
 		Node* cur = root;
 		Node* parent = head;
+		KOFP key;
+		
 		while (cur)
 		{
 			parent = cur;
-			if (data < cur->data)
+			if (key(data) < key(cur->data))
 				cur = cur->left;
-			else if (data > cur->data)
+			else if (key(data) > key(cur->data))
 				cur = cur->right;
-			else
-				return false;
+			else   // 该节点存在
+				return make_pair(iterator(cur), true);
 		}
 
 		// 1.3 找到插入位置后，插入新节点
-		cur = new Node(data);
+		Node* newNode = new Node(data);
+		cur = newNode;
 		if (data < parent->data)
 			parent->left = cur;
 		else
@@ -152,14 +300,29 @@ public:
 		root->color = BLACK;
 		head->left = getLeftMin();
 		head->right = getRightMax();
-		return true;
-	}
 
+		_size++;
+		return make_pair(iterator(newNode), true);
+	}
+	// 交换两棵树
+	void swap(RBTree<T, KOFP>& t)
+	{
+		std::swap(head, t.head);
+		std::swap(_size, t._size);
+	}
+	// 清空红黑树所有有效节点
+	void clear()
+	{
+		Destroy(getRoot());
+		_size = 0;
+	}
+	// 中序遍历红黑树
 	void inOrder()
 	{
 		InOrder(head->parent);
 		cout << endl;
 	}
+	// 判断该树是否为红黑树
 	bool isValidRBTree()
 	{
 		// 空树是红黑树
@@ -194,9 +357,36 @@ public:
 		size_t pathBlackCount = 0;	// 用来保存单条路径中黑色节点的个数
 		return _ValidRBTree(root, pathBlackCount, blackCount);
 	}
+	// 容量相关的操作
+	size_t size() const
+	{
+		return _size;
+	}
+	// 判断红黑树是否为空
+	bool empty()
+	{
+		return head->parent == nullptr;
+	}
+	// 查找某个节点并返回其引用
+	iterator find(const T& data)
+	{
+		Node* cur = getRoot();
+		KOFP key;
+		while (cur)
+		{
+			if (key(data) == key(cur->data))
+				return iterator(cur);
+			else if (key(data) < key(cur->data))
+				cur = cur->left;
+			else
+				cur = cur->right;
+		}
+		return end();
+	}
 
 private:
 	Node* head;	 // 指向红黑树头结点的指针
+	size_t _size;	// 保存红黑树的节点个数
 
 	bool _ValidRBTree(Node* root, size_t pathBlackCount, const size_t blackCount)
 	{
@@ -343,72 +533,5 @@ private:
 			cur = cur->right;
 		return cur;
 	}
-
-};
-
-// 迭代器
-template<class T>
-struct RBTreeIterator
-{
-	typedef RBTreeNode<T> Node;
-	typedef RBTreeIterator<T> self;
-public:
-	RBTreeIterator(Node* n = nullptr) : node(n){}
-	// 具有指针类似的方法
-	T& operator*()
-	{
-		return node->data;
-	}
-	T* operator->()
-	{
-		return &(operator*());
-	}
-	// 能够移动
-	/*
-	找比当前节点大的 所有节点中最小的节点
-	*/
-	self& operator++()
-	{
-		Increment();
-		return *this;
-	}
-	self& operator++(int)
-	{
-		self temp(*this);
-		Increment();
-		return temp;
-	}
-	self& operator--()
-	{
-		Decrement();
-		return *this;
-	}
-	self& operator--(int)
-	{
-		self temp(*this);
-		Decrement();
-		return temp;
-	}
-	bool operator!=(const self& s)const
-	{
-		return node != s.node;
-	}
-	bool operator==(const self& s)const
-	{
-		return node == s.node;
-	}
-
-private:
-	Node* node;		// 封装 节点指针
-
-	// 找当前迭代器的后一个位置
-	void Increment()
-	{
-
-	}
-	// 找当前迭代器的前一个位置
-	void Decrement()
-	{
-
-	}
+ 
 };

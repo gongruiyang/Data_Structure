@@ -11,7 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RBTree.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="RBTree.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="map模拟.hpp" />
+    <ClInclude Include="set模拟.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F0F51694-70C1-4345-A639-0C1C19EF0227}</ProjectGuid>
